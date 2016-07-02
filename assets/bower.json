@@ -1,0 +1,23 @@
+{
+  "name": "test_fortytwo_test_task",
+  "homepage": "https://github.com/leksv/FortyTwoTestTask",
+  "authors": [
+    "Aleksey Voronov <aleks.woronow@yandex.ru>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^2.2.3",
+    "bootstrap": "^3.3.6",
+    "jquery.cookie": "^1.4.1"
+  }
+}
