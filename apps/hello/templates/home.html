@@ -4,23 +4,26 @@
 {% block content %}
 
 <div class="row">
+     {% if contact %}
      <div class="col-md-5">
           <ul class="list-group">
                <li class="list-group-item"></li>
-               <li class="list-group-item">Name: {{ name }}</li>
-               <li class="list-group-item">Last name: {{ surname }}</li>
-               <li class="list-group-item">Date of birth: {{ date }}</li>
-               <li class="list-group-item">Bio: {{ bio }}</li>
+               <li class="list-group-item">Name: {{ contact.name }}</li>
+               <li class="list-group-item">Last name: {{ contact.surname }}</li>
+               <li class="list-group-item">Date of birth: {{ contact.date_of_birth }}</li>
+               <li class="list-group-item">Bio: {{ contact.bio }}</li>
           </ul>
      </div>      
      <div class="col-md-5">
           <ul class="list-group">
                <li class="list-group-item"><strong>Contacts</strong></li>
-               <li class="list-group-item">Email: {{ email }}</li>
-               <li class="list-group-item">Jabber: {{ jabber }}</li>
-               <li class="list-group-item">Skype id: {{ skype }}</li>
-               <li class="list-group-item">Other contacts: {{ other }}</li>
+               <li class="list-group-item">Email: {{ contact.email }}</li>
+               <li class="list-group-item">Jabber: {{ contact.jabber }}</li>
+               <li class="list-group-item">Skype id: {{ contact.skype_id }}</li>
+               <li class="list-group-item">Other contacts: {{ contact.other }}</li>
           </ul>
      </div>
-
+ {% else %}
+   <p>Contact data no yet</p>
+ {% endif %}
 {% endblock content %}
