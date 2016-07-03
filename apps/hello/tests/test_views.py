@@ -32,7 +32,7 @@ class HomePageTest(TestCase):
                             '<h1>42 Coffee Cups Test Assignment</h1>',
                             html=True)
 
-    def test_home_page_one_contact(self):
+    def test_home_page_one_contact_in_db(self):
         """
         Test home page if contact table has one record.
         """
@@ -45,3 +45,31 @@ class HomePageTest(TestCase):
         self.assertContains(response, 'leksw@42cc.co')
         self.assertContains(response, 'aleksey_woronov')
         self.assertContains(response, 'I was born ...')
+
+    def test_home_page_two_contact_in_db(self):
+        """
+        Test home page if contact table has more then one record.
+        """
+        models.Contact.objects.create(
+            name='Ivan',
+            surname='Ivanov',
+            email='ivan.ivanov@yandex.ru',
+            date_of_birth=date(2016, 4, 25),
+            bio='I was born ...',
+            jabber='ivan@42cc.co',
+            skype_id='ivan_ivanov')
+
+        response = self.client.get(reverse('hello:home'))
+
+        self.assertContains(response, 'Aleksey')
+        self.assertNotContains(response, 'Ivan')
+
+    def test_home_page_no_contact_in_db(self):
+        """
+        Test home page if contact table is empty.
+        """
+        models.Contact.objects.all().delete()
+        response = self.client.get(reverse('hello:home'))
+
+        self.assertNotContains(response, 'Aleksey')
+        self.assertContains(response, 'Contact data no yet')
