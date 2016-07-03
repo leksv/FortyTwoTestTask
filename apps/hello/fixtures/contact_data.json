@@ -1,0 +1,16 @@
+[
+{
+    "pk": 1, 
+    "model": "hello.contact", 
+    "fields": {
+        "bio": "I was born ...", 
+        "surname": "Woronow", 
+        "name": "Aleksey", 
+        "other": "", 
+        "date_of_birth": "2016-07-03", 
+        "skype_id": "aleksey_woronov", 
+        "jabber": "aleksw@42cc.co", 
+        "email": "aleks.woronow@yandex.ru"
+    }
+}
+]
