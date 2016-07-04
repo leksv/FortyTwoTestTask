@@ -20,3 +20,9 @@ migrate:
 collectstatic:
 	PYTHONPATH=`pwd` DJANGO_SETTINGS_MODULE=$(SETTINGS) $(MANAGE) collectstatic --noinput
 .PHONY: test syncdb migrate
+
+c_test:
+	coverage run --source='.' manage.py test hello
+
+report:
+	coverage html -d coverage_html

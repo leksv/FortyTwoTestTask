@@ -15,3 +15,5 @@ media
 static
 *.dat
 .env
+uploads
+coverage_html
