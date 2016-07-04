@@ -18,8 +18,13 @@
     </head>
     <body id="{% block body_id %}{% endblock %}" class="{% block body_class %}{% endblock %}">
         <div class="container">
-       <h1>42 Coffee Cups Test Assignment</h1>
-        {% block content %}{% endblock content %}
+           
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                     <h1>42 Coffee Cups Test Assignment</h1>
+                    {% block content %}{% endblock content %}
+                </div>
+            </div>
         </div>
          {% include "javascriptsheet.html" %}
          {% block script %}{% endblock script %}
