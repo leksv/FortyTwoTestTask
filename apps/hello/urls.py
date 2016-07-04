@@ -13,4 +13,5 @@ urlpatterns = patterns(
     url(r'^requests/$',
         TemplateView.as_view(template_name="requests.html"),
         name='requests'),
+    url(r'^requests_ajax/$', views.request_ajax, name='requests_ajax'),
 )

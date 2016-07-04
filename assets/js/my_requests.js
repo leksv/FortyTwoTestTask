@@ -36,6 +36,16 @@ var helloRequest = (function($){
 
  return {
      loadRequest: function(){
+         $.ajax({
+            url: '/requests_ajax/',
+            dataType : "json",
+            success: function(data, textStatus) {
+                console.log(data);
+            },
+            error: function(jqXHR) {
+                console.log(jqXHR.responseText);
+            }
+         });
         
         handleRequest(data);
        
