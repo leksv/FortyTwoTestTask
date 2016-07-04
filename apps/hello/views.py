@@ -19,9 +19,7 @@ def home_page(request):
 def request_ajax(request):
     if request.is_ajax():
         return HttpResponse(
-            json.dumps({'path': '/',
-                        'method': 'GET',
-                        'date': '2016-07-04'}),
+            json.dumps([{'path': '/', 'method': 'GET', 'date': '2016-07-04'}]),
             content_type='application/json')
 
     return HttpResponseBadRequest('Error request')

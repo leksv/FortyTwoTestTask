@@ -1,22 +1,7 @@
 var helloRequest = (function($){
-   var data = [{
-       path: '/requests/',
-       method: 'GET',
-       date: '2016-07-04'
-   }, 
-   {
-       path: '/requests/',
-       method: 'GET',
-       date: '2016-07-04'
-   },
-   {
-       path: '/requests/',
-       method: 'GET',
-       date: '2016-07-04'
-   }];
-   var items = [];
-  function handleRequest(data) {
 
+  var items = [];
+  function handleRequest(data) {
     $.each(data, function(i, val) {
         items.push('<tr>'
                     + '<td>' + val.path + '</td>'
@@ -35,20 +20,17 @@ var helloRequest = (function($){
 }
 
  return {
-     loadRequest: function(){
+    loadRequest: function(){
          $.ajax({
             url: '/requests_ajax/',
             dataType : "json",
             success: function(data, textStatus) {
-                console.log(data);
+                handleRequest(data);
             },
             error: function(jqXHR) {
                 console.log(jqXHR.responseText);
             }
          });
-        
-        handleRequest(data);
-       
      }
 };
 })(jQuery);
