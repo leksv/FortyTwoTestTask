@@ -27,7 +27,7 @@ var helloRequest = (function($){
         
    });
    var title = $('title').text().split(')')[1] || $('title').text();
-   var pre_titile = '(3) ';
+   var pre_titile = '';
    $('#request').find('tbody').html(items);
    $('td').addClass('text-center');
    $('th').addClass('text-center');
