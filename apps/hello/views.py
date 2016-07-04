@@ -5,6 +5,7 @@ import json
 
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest
+from django.core import serializers
 
 from . import models
 
@@ -18,8 +19,10 @@ def home_page(request):
 
 def request_ajax(request):
     if request.is_ajax():
-        return HttpResponse(
-            json.dumps([{'path': '/', 'method': 'GET', 'date': '2016-07-04'}]),
-            content_type='application/json')
+        new_request = models.RequestStore.objects.filter(new_request=1).count()
+        request_list = models.RequestStore.objects.order_by('-date')[:10]
+        list_req = serializers.serialize("json", request_list)
+        data = json.dumps((new_request, list_req))
+        return HttpResponse(data, content_type="application/json")
 
     return HttpResponseBadRequest('Error request')

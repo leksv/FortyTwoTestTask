@@ -28,6 +28,7 @@ class RequestStore(models.Model):
                              blank=True,
                              null=True)
     date = models.DateTimeField(auto_now_add=True)
+    new_request = models.PositiveIntegerField(default=1)
 
     def __unicode__(self):
         return "%s - %s" % (self.path, self.method)

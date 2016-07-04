@@ -100,6 +100,6 @@ class RequestAjaxTest(TestCase):
         response = self.client.get(reverse('hello:requests_ajax'),
                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
-        self.assertIn('GET', response.content)
-        self.assertIn('path', response.content)
-        self.assertIn('/', response.content)
+        self.assertIn('[]', response.content)
+        self.assertIn('[]', response.content)
+        self.assertIn('[]', response.content)

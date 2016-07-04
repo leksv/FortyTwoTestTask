@@ -1,18 +1,21 @@
 var helloRequest = (function($){
 
-  var items = [];
   function handleRequest(data) {
-    $.each(data, function(i, val) {
+
+    var items = [];
+    var id = data[0];
+    console.log(data[1]);
+    $.each(JSON.parse(data[1]), function(i, val) {
         items.push('<tr>'
-                    + '<td>' + val.path + '</td>'
-                    + '<td>' + val.method + '</td>'
-                    + '<td>' + val.date + '</td>'
+                    + '<td class="path">' + val.fields.path + '</td>'
+                    + '<td>' + val.fields.method + '</td>'
+                    + '<td>' + val.fields.date + '</td>'
                     + '</tr>'
         );
         
    });
    var title = $('title').text().split(')')[1] || $('title').text();
-   var pre_titile = '';
+   var pre_titile = id ? '(' + id + ')' : '';
    $('#request').find('tbody').html(items);
    $('td').addClass('text-center');
    $('th').addClass('text-center');
@@ -20,7 +23,7 @@ var helloRequest = (function($){
 }
 
  return {
-    loadRequest: function(){
+     loadRequest: function(){
          $.ajax({
             url: '/requests_ajax/',
             dataType : "json",
@@ -32,7 +35,7 @@ var helloRequest = (function($){
             }
          });
      }
-};
+ };
 })(jQuery);
 
 
