@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.conf import settings
 
 
 class Contact(models.Model):
@@ -18,3 +19,15 @@ class Contact(models.Model):
 
     def __unicode__(self):
         return '%s %s' % (self.surname, self.name)
+
+
+class RequestStore(models.Model):
+    path = models.CharField(max_length=250)
+    method = models.CharField(max_length=10)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             blank=True,
+                             null=True)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return "%s - %s" % (self.path, self.method)
