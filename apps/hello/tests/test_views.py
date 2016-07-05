@@ -73,3 +73,41 @@ class HomePageTest(TestCase):
 
         self.assertNotContains(response, 'Aleksey')
         self.assertContains(response, 'Contact data no yet')
+
+
+class RequestViewTest(TestCase):
+    def test_request_view(self):
+        """
+        Request view should return response that has "Requests",
+        "Path", "Method", "Date".
+        """
+        response = self.client.get(reverse('hello:requests'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'requests.html')
+        self.assertIn('Requests', response.content)
+        self.assertIn('Path', response.content)
+        self.assertIn('Method', response.content)
+        self.assertIn('Date', response.content)
+
+
+class RequestAjaxTest(TestCase):
+    def test_request_ajax_view_if_ajax_request(self):
+        """
+        Test request ajax view if ajax request.
+        """
+        self.client.get(reverse('hello:home'))
+        response = self.client.get(reverse('hello:requests_ajax'),
+                                   HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        self.assertIn('/', response.content)
+        self.assertIn('GET', response.content)
+
+    def test_request_ajax_view_if_not_ajax_request(self):
+        """
+        Test request ajax view if not ajax request.
+        """
+        response = self.client.get(reverse('hello:requests_ajax'))
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('Error request', response.content)
