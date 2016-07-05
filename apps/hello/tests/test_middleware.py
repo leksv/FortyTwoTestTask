@@ -6,8 +6,8 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
 from django.test.client import RequestFactory
 
-from .. import models
-from .. import views
+from ..models import RequestStore
+from ..views import home_page
 from apps.middleware.helloRequest import RequestMiddle
 
 
@@ -17,7 +17,7 @@ class RequestMiddlewareTests(TestCase):
         Test for inclusion RequestMiddleware in project.
         """
         self.client.get(reverse('hello:home'))
-        last_middleware_obj = models.RequestStore.objects.last()
+        last_middleware_obj = RequestStore.objects.last()
         self.assertEqual(last_middleware_obj.method, 'GET')
         self.assertEqual(last_middleware_obj.path, reverse('hello:home'))
 
@@ -29,7 +29,7 @@ class RequestMiddlewareTests(TestCase):
         self.client.get(reverse('hello:requests_ajax'),
                         HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
-        middleware_obj = models.RequestStore.objects.all()
+        middleware_obj = RequestStore.objects.all()
         self.assertQuerysetEqual(middleware_obj, [])
 
     def test_middleware_store_user(self):
@@ -45,6 +45,6 @@ class RequestMiddlewareTests(TestCase):
         request.user = user
 
         # middleware store request
-        RequestMiddle().process_view(request, views.home_page)
-        middleware_obj = models.RequestStore.objects.all()[0]
+        RequestMiddle().process_view(request, home_page)
+        middleware_obj = RequestStore.objects.all()[0]
         self.assertEqual(middleware_obj.user.username, 'test')
