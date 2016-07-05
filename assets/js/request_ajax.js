@@ -42,4 +42,7 @@ var helloRequest = (function($){
 $(document).ready(function(){
     helloRequest.loadRequest();
     setInterval(helloRequest.loadRequest, 50);
+    window.onfocus = function () {
+        location.reload();
+    };
 });
