@@ -92,9 +92,9 @@ class RequestViewTest(TestCase):
 
 
 class RequestAjaxTest(TestCase):
-    def test_request_ajax_view(self):
+    def test_request_ajax_view_if_ajax_request(self):
         """
-        Test request ajax view
+        Test request ajax view if ajax request.
         """
         self.client.get(reverse('hello:home'))
         response = self.client.get(reverse('hello:requests_ajax'),
@@ -103,3 +103,12 @@ class RequestAjaxTest(TestCase):
         self.assertIn('[]', response.content)
         self.assertIn('[]', response.content)
         self.assertIn('[]', response.content)
+
+    def test_request_ajax_view_if_not_ajax_request(self):
+        """
+        Test request ajax view if not ajax request.
+        """
+        response = self.client.get(reverse('hello:requests_ajax'))
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('Error request', response.content)
