@@ -100,9 +100,8 @@ class RequestAjaxTest(TestCase):
         response = self.client.get(reverse('hello:requests_ajax'),
                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
-        self.assertIn('[]', response.content)
-        self.assertIn('[]', response.content)
-        self.assertIn('[]', response.content)
+        self.assertIn('/', response.content)
+        self.assertIn('GET', response.content)
 
     def test_request_ajax_view_if_not_ajax_request(self):
         """

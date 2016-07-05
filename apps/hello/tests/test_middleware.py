@@ -2,24 +2,16 @@
 from __future__ import unicode_literals
 
 from django.test import TestCase
-from django.test.client import RequestFactory
-from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
+from django.contrib.auth import get_user_model
+from django.test.client import RequestFactory
 
-
-from apps.middleware.helloRequest import RequestMiddle
 from .. import models
-from ..decorators import not_record_request
-from ..views import home_page
+from .. import views
+from apps.middleware.helloRequest import RequestMiddle
 
 
 class RequestMiddlewareTests(TestCase):
-    def setUp(self):
-        self.factory = RequestFactory()
-        self.middleware = RequestMiddle()
-        self.request_store = RequestStore
-        self.user = get_user_model().objects.get(id=1)
-
     def test_middleware_is_included(self):
         """
         Test for inclusion RequestMiddleware in project.
@@ -34,8 +26,25 @@ class RequestMiddlewareTests(TestCase):
         Test middleware RequestMiddle don't store request
         to request_ajax view.
         """
-        response = self.client.get(reverse('hello:requests_ajax'),
-                                   HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.client.get(reverse('hello:requests_ajax'),
+                        HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         middleware_obj = models.RequestStore.objects.all()
         self.assertQuerysetEqual(middleware_obj, [])
+
+    def test_middleware_store_user(self):
+        """
+        Test middleware RequestMiddle store request user.
+        """
+        request = RequestFactory().get(reverse('hello:home'))
+
+        # add user to request
+        User = get_user_model()
+        user = User.objects.create(
+            username='test', email='test@i.ua', password='test')
+        request.user = user
+
+        # middleware store request
+        RequestMiddle().process_view(request, views.home_page)
+        middleware_obj = models.RequestStore.objects.all()[0]
+        self.assertEqual(middleware_obj.user.username, 'test')

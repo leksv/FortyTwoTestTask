@@ -17,6 +17,11 @@ def home_page(request):
     return render(request, 'home.html', context)
 
 
+def request_view(request):
+    models.RequestStore.objects.filter(new_request=1).update(new_request=0)
+    return render(request, 'requests.html')
+
+
 def request_ajax(request):
     if request.is_ajax():
         new_request = models.RequestStore.objects.filter(new_request=1).count()

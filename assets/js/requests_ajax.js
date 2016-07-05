@@ -15,7 +15,7 @@ var helloRequest = (function($){
         
    });
    var title = $('title').text().split(')')[1] || $('title').text();
-   var pre_titile = id ? '(' + id + ')' : '';
+   var pre_titile = id ? '(' + id + ') ' : '';
    $('#request').find('tbody').html(items);
    $('td').addClass('text-center');
    $('th').addClass('text-center');
@@ -41,4 +41,5 @@ var helloRequest = (function($){
 
 $(document).ready(function(){
     helloRequest.loadRequest();
+    setInterval(helloRequest.loadRequest, 50);
 });
