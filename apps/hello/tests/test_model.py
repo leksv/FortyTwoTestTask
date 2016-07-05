@@ -5,14 +5,14 @@ from datetime import date
 
 from django.test import TestCase
 
-from .. import models
+from ..models import Contact
 
 
 class ContactTest(TestCase):
     def setUp(self):
-        models.Contact.objects.create(
-            name='Aleksey',
-            surname='Voronov',
+        self.contact = Contact.objects.create(
+            name='Алексей',
+            surname='Воронов',
             email='aleks.woronow@yandex.ru',
             date_of_birth=date(2016, 2, 25))
 
@@ -21,8 +21,9 @@ class ContactTest(TestCase):
         Check to create of model and save it to db,
         and __unicode__ method should return last name and name.
         """
-        all_contact = models.Contact.objects.all()
+        all_contact = Contact.objects.all()
         self.assertEquals(len(all_contact), 1)
         contact = all_contact[0]
-        self.assertEquals(contact.id, 1)
-        self.assertEquals(str(contact), 'Voronov Aleksey')
+        self.assertEquals(contact.id, self.contact.id)
+        self.assertEquals(unicode(contact), 'Воронов Алексей')
+        self.assertEquals(contact.name, 'Алексей')

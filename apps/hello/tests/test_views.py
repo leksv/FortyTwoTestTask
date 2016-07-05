@@ -6,14 +6,14 @@ from datetime import date
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-from .. import models
+from ..models import Contact
 
 
 class HomePageTest(TestCase):
     def setUp(self):
-        models.Contact.objects.create(
-            name='Aleksey',
-            surname='Voronov',
+        self.contact = Contact.objects.create(
+            name='Алексей',
+            surname='Воронов',
             email='aleks.woronow@yandex.ru',
             date_of_birth=date(2016, 2, 25),
             bio='I was born ...',
@@ -38,8 +38,8 @@ class HomePageTest(TestCase):
         """
         response = self.client.get(reverse('hello:home'))
 
-        self.assertContains(response, 'Aleksey')
-        self.assertContains(response, 'Voronov')
+        self.assertContains(response, 'Алексей')
+        self.assertContains(response, 'Воронов')
         self.assertContains(response, 'Feb. 25, 2016')
         self.assertContains(response, 'aleks.woronow@yandex.ru')
         self.assertContains(response, 'leksw@42cc.co')
@@ -50,7 +50,7 @@ class HomePageTest(TestCase):
         """
         Test home page if contact table has more then one record.
         """
-        models.Contact.objects.create(
+        Contact.objects.create(
             name='Ivan',
             surname='Ivanov',
             email='ivan.ivanov@yandex.ru',
@@ -61,15 +61,15 @@ class HomePageTest(TestCase):
 
         response = self.client.get(reverse('hello:home'))
 
-        self.assertContains(response, 'Aleksey')
+        self.assertContains(response, 'Алексей')
         self.assertNotContains(response, 'Ivan')
 
     def test_home_page_no_contact_in_db(self):
         """
         Test home page if contact table is empty.
         """
-        models.Contact.objects.all().delete()
+        Contact.objects.all().delete()
         response = self.client.get(reverse('hello:home'))
 
-        self.assertNotContains(response, 'Aleksey')
+        self.assertNotContains(response, 'Алексей')
         self.assertContains(response, 'Contact data no yet')
