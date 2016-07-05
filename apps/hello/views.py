@@ -7,12 +7,12 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.core import serializers
 
-from . import models
+from .models import Contact
 
 
 def home_page(request):
     context = {}
-    contact = models.Contact.objects.first()
+    contact = Contact.objects.first()
     context['contact'] = contact
     return render(request, 'home.html', context)
 
