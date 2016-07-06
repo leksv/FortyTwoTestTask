@@ -1,0 +1,23 @@
+body {
+    background-image: url("/static/binder.jpg");
+    background-color: #cccccc;
+    background-size: cover; /* Масштабируем фон */
+}
+
+.list-group-item {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: -1px;
+    background-color: #fff;
+    border: 0px;
+}
+
+#header {
+    padding-top: 80px;
+    color: #fff;
+}
+
+#main {
+    padding-top: 50px;
+}
