@@ -4,7 +4,6 @@ var helloRequest = (function($){
 
     var items = [];
     var id = data[0];
-    console.log(data[1]);
     $.each(JSON.parse(data[1]), function(i, val) {
         items.push('<tr>'
                     + '<td class="path">' + val.fields.path + '</td>'
@@ -41,8 +40,8 @@ var helloRequest = (function($){
 
 $(document).ready(function(){
     helloRequest.loadRequest();
-    setInterval(helloRequest.loadRequest, 50);
-    window.onfocus = function () {
-        location.reload();
-    };
+    setInterval(helloRequest.loadRequest, 200);
+    var blurred = false;
+    window.onblur = function() { blurred = true; };
+    window.onfocus = function() { blurred && (location.reload()); };
 });

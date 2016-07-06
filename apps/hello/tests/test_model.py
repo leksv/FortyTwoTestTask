@@ -5,7 +5,7 @@ from datetime import date
 
 from django.test import TestCase
 
-from ..models import Contact, RequestStore
+from hello.models import Contact, RequestStore
 
 
 class ContactTest(TestCase):

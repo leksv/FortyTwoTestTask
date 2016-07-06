@@ -7,7 +7,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.core import serializers
 
-from .models import Contact, RequestStore
+from hello.models import Contact, RequestStore
 
 
 def home_page(request):

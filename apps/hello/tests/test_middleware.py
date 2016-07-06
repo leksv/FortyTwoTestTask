@@ -6,8 +6,8 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
 from django.test.client import RequestFactory
 
-from ..models import RequestStore
-from ..views import home_page
+from hello.models import RequestStore
+from hello.views import home_page
 from apps.middleware.helloRequest import RequestMiddle
 
 
