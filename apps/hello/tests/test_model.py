@@ -5,7 +5,7 @@ from datetime import date
 
 from django.test import TestCase
 
-from ..models import Contact
+from ..models import Contact, RequestStore
 
 
 class ContactTest(TestCase):
@@ -28,22 +28,22 @@ class ContactTest(TestCase):
         self.assertEquals(unicode(contact), 'Воронов Алексей')
         self.assertEquals(contact.name, 'Алексей')
 
+
 class RequestStoreTest(TestCase):
     def test_request_store(self):
         """
         Check to create of model and save it to db
         """
 
-        models.RequestStore.objects.create(
+        RequestStore.objects.create(
             path='/', method='GET', date=date(2016, 7, 4))
 
         # now check we can find it in the database again
-        all_requests = models.RequestStore.objects.all()
+        all_requests = RequestStore.objects.all()
         self.assertEquals(len(all_requests), 1)
         only_request = all_requests[0]
-        self.assertEquals(str(only_request), '/ - GET')
+        self.assertEquals(unicode(only_request), '/ - GET')
 
         # and check that it's saved its two attributes: path and method
         self.assertEquals(only_request.path, '/')
         self.assertEquals(only_request.method, 'GET')
-
