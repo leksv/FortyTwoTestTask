@@ -6,7 +6,7 @@ from datetime import date
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-from ..models import Contact
+from hello.models import Contact
 
 
 class HomePageTest(TestCase):
