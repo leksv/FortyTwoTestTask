@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.core import serializers
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 
 from hello.models import Contact, RequestStore
 from hello.forms import ContactForm
@@ -36,6 +37,7 @@ def request_ajax(request):
     return HttpResponseBadRequest('Error request')
 
 
+@login_required
 def form_page(request):
     contact = Contact.objects.first()
 

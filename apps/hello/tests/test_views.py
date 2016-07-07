@@ -116,6 +116,8 @@ class RequestAjaxTest(TestCase):
 
 
 class FormPageTest(TestCase):
+    fixtures = ['admin_data.json']
+
     def setUp(self):
         self.data = dict(name='Ivan', surname='Ivanov',
                          date_of_birth='2016-02-02',
@@ -136,7 +138,6 @@ class FormPageTest(TestCase):
         self.client.login(username='admin', password='admin')
         response = self.client.get(reverse('hello:contact_form'))
         self.assertTemplateUsed(response, 'contact_form.html')
-
 
     def test_form_page_add_data(self):
         """
