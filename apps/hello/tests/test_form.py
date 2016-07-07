@@ -13,7 +13,6 @@ class FormTest(TestCase):
         """
         Test form blank data.
         """
-       
         form = ContactForm({})
 
         self.assertEqual(form.is_valid(), False)
