@@ -22,7 +22,6 @@
             <div class="form-group">
                 <label for="id_name" class="col-sm-2 control-label">Name</label>
                 <div class="col-sm-8">
-                    <input type="text" class="form-control" >
                   {{ form.name.errors }}
                   {{ form.name }}
                 </div>
@@ -30,7 +29,6 @@
             <div class="form-group">
                <label for="id_surname" class="col-sm-2 control-label">Surname</label>
                 <div class="col-sm-8">
-                    <input type="text" class="form-control" >
                   {{ form.surname.errors }} 
                   {{ form.surname }}
                 </div>
@@ -38,7 +36,6 @@
             <div class="form-group">
                 <label for="id_date_of_birth" class="col-sm-2 control-label">Date of birth</label>
                 <div class="col-sm-8">
-                    <input type="text" class="form-control" >
                   {{ form.date_of_birth.errors }}
                   {{ form.date_of_birth }}
                 </div>
@@ -46,7 +43,6 @@
             <div class="form-group">
                 <label for="id_photo" class="col-sm-2 control-label">Photo</label>
                 <div class="col-sm-8">
-                     <input type="text" class="form-control" >
                    {{ form.image }}
               <div id="error_{{ form.image.label|lower}}" class="has-error"></div>
             </div>
@@ -57,7 +53,6 @@
             <div class="form-group">
                 <label for="id_email" class="col-sm-2 control-label">Email</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" >
                   {{ form.email.errors }}
                   {{ form.email }}
                 </div>
@@ -65,14 +60,12 @@
             <div class="form-group">
                 <label for="id_jabber" class="col-sm-2 control-label">Jabber</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" >
                   {{ form.jabber }}
                 </div>
             </div>
             <div class="form-group">
                 <label for="id_skype_id" class="col-sm-2 control-label">Skype id</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" >
                  {{ form.skype_id.errors }} 
                  {{ form.skype_id }}
                 </div>
@@ -80,7 +73,6 @@
             <div class="form-group">
                 <label for="id_other" class="col-sm-2 control-label">Other contacts</label>
                 <div class="col-sm-10">
-                    <textarea class="form-control" rows="3"></textarea>
                   {{ form.other.errors }}  
                   {{ form.other }}
                 </div>
@@ -88,7 +80,6 @@
             <div class="form-group">
                 <label for="id_bio" class="col-sm-2 control-label">Bio</label>
                 <div class="col-sm-10">
-                    <textarea class="form-control" rows="3"></textarea>
                  {{ form.bio.errors }}
                  {{ form.bio }}
                 </div>

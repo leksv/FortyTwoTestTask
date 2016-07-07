@@ -12,8 +12,7 @@ urlpatterns = patterns(
     url(r'^$', views.home_page, name='home'),
     url(r'^requests/$', views.request_view, name='requests'),
     url(r'^requests_ajax/$', views.request_ajax, name='requests_ajax'),
-    url(
-        r'^form/$',
-        TemplateView.as_view(template_name='contact_form.html'),
-        name='contact_form'),
+    url(r'^form/$', views.form_page, name='contact_form'),
+    url(r'^change_contact/success/$',
+        TemplateView.as_view(template_name="success.html"), name='success'),
 )

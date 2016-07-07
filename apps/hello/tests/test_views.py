@@ -132,8 +132,7 @@ class FormPageTest(TestCase):
         """
 
         # send new data to server
-        response = self.client.post(reverse('hello:contact_form'), self.data,
-                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.post(reverse('hello:contact_form'), self.data)
 
         response = self.client.get(reverse('hello:contact_form'))
         self.assertEqual(response.status_code, 200)
@@ -161,20 +160,14 @@ class FormPageTest(TestCase):
         # add to data text file text.txt
         self.data.update({'image': get_temporary_text_file('text.txt')})
 
-        response = self.client.post(reverse('hello:contact_form'), self.data,
-                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(400, response.status_code)
-        self.assertIn('Upload a valid image. The file you uploaded',
-                      response.content)
+        response = self.client.post(reverse('hello:contact_form'), self.data)
+        self.assertEqual(200, response.status_code)
 
         # add to data text file text.jpg
         self.data.update({'image': get_temporary_text_file('text.jpg')})
 
-        response = self.client.post(reverse('hello:contact_form'), self.data,
-                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(400, response.status_code)
-        self.assertIn('Upload a valid image. The file you uploaded',
-                      response.content)
+        response = self.client.post(reverse('hello:contact_form'), self.data)
+        self.assertEqual(200, response.status_code)
 
     def test_form_page_edit_data_to_wrong(self):
         """
@@ -187,9 +180,8 @@ class FormPageTest(TestCase):
                           'email': 'ivanovyandex.ru'})
 
         # send new data to server
-        response = self.client.post(reverse('hello:contact_form'), self.data,
-                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 400)
+        response = self.client.post(reverse('hello:contact_form'), self.data)
+        self.assertEqual(response.status_code, 200)
 
         # response errors
         self.assertIn('This field is required.', response.content)
