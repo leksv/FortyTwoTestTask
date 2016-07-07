@@ -2,10 +2,28 @@
 from __future__ import unicode_literals
 
 from datetime import date
+import StringIO
+import os
 
 from django.test import TestCase
+from django.core.files.uploadedfile import InMemoryUploadedFile
+
+from PIL import Image as Img
 
 from hello.models import Contact, RequestStore
+
+
+# create image file for test
+def get_temporary_image():
+        output = StringIO.StringIO()
+        size = (1200, 700)
+        color = (255, 0, 0, 0)
+        image = Img.new("RGBA", size, color)
+        image.save(output, format='JPEG')
+        image_file = InMemoryUploadedFile(
+            output, None, 'test.jpg', 'jpeg', output.len, None)
+        image_file.seek(0)
+        return image_file
 
 
 class ContactTest(TestCase):
@@ -27,6 +45,41 @@ class ContactTest(TestCase):
         self.assertEquals(contact.id, self.contact.id)
         self.assertEquals(unicode(contact), 'Воронов Алексей')
         self.assertEquals(contact.name, 'Алексей')
+
+    def test_contact_model_image(self):
+        """
+        Test check that overwritten save method maintaining aspect ratio
+        and reduce image to <= 200*200.
+        """
+
+        # save image file
+        contact = Contact.objects.get(id=self.contact.id)
+        contact.image = get_temporary_image()
+        contact.save()
+
+        # check that height and width <= 200
+        self.assertTrue(contact.height <= 200)
+        self.assertTrue(contact.width <= 200)
+
+    def test_contact_model_image_delete(self):
+        """
+        Test check that delete method deleting file.
+        """
+        # save image file
+        contact = Contact.objects.get(id=self.contact.id)
+        contact.image = get_temporary_image()
+        contact.save()
+
+        # check image file is on storage
+        file = os.path.isfile(contact.image.path)
+        self.assertTrue(file)
+
+        # delete contact
+        contact.delete()
+
+        # check image file is not on storage
+        rm_file = os.path.isfile(contact.image.path)
+        self.assertFalse(rm_file)
 
 
 class RequestStoreTest(TestCase):
