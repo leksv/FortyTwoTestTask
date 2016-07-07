@@ -1,29 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from datetime import date
-import StringIO
 import os
+from datetime import date
 
 from django.test import TestCase
-from django.core.files.uploadedfile import InMemoryUploadedFile
-
-from PIL import Image as Img
 
 from hello.models import Contact, RequestStore
-
-
-# create image file for test
-def get_temporary_image():
-        output = StringIO.StringIO()
-        size = (1200, 700)
-        color = (255, 0, 0, 0)
-        image = Img.new("RGBA", size, color)
-        image.save(output, format='JPEG')
-        image_file = InMemoryUploadedFile(
-            output, None, 'test.jpg', 'jpeg', output.len, None)
-        image_file.seek(0)
-        return image_file
+from hello.tests.temp_files import get_temporary_image
 
 
 class ContactTest(TestCase):

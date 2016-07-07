@@ -8,6 +8,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.core import serializers
 
 from hello.models import Contact, RequestStore
+from hello.forms import ContactForm
 
 
 def home_page(request):

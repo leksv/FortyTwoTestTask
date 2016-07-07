@@ -7,6 +7,8 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 
 from hello.models import Contact
+from hello.tests.temp_files import get_temporary_image
+from hello.tests.temp_files import get_temporary_text_file
 
 
 class HomePageTest(TestCase):
@@ -111,3 +113,89 @@ class RequestAjaxTest(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertIn('Error request', response.content)
+
+
+class FormPageTest(TestCase):
+    fixtures = ['contact_data.json']
+
+    def setUp(self):
+        self.contact = Contact.objects.first()
+        self.data = dict(name='Ivan', surname='Ivanov',
+                         date_of_birth='2016-02-02',
+                         bio='', email='ivanov@yandex.ru',
+                         jabber='iv@jabb.com',
+                         image=get_temporary_image())
+
+    def test_form_page_edit_data(self):
+        """
+        Test check edit data at form page.
+        """
+
+        # send new data to server
+        response = self.client.post(reverse('hello:contact_form'), self.data,
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        response = self.client.get(reverse('hello:contact_form'))
+        self.assertEqual(response.status_code, 200)
+
+        # data are shown at form page according to changed data
+        self.assertNotIn(self.contact.name, response.content)
+        self.assertNotIn(self.contact.surname, response.content)
+        self.assertNotIn(self.contact.date_of_birth.strftime('%Y-%m-%d'),
+                         response.content)
+        self.assertNotIn(self.contact.email, response.content)
+        self.assertNotIn(self.contact.jabber, response.content)
+
+        self.assertIn('Ivan', response.content)
+        self.assertIn('Ivanov', response.content)
+        self.assertIn('2016-02-02', response.content)
+        self.assertIn('ivanov@yandex.ru', response.content)
+        self.assertIn('iv@jabb.com', response.content)
+        self.assertIn('test.jpg', response.content)
+
+    def test_form_page_on_text_file(self):
+        """
+        Test check form_page return error if upload text file.
+        """
+
+        # add to data text file text.txt
+        self.data.update({'image': get_temporary_text_file('text.txt')})
+
+        response = self.client.post(reverse('hello:contact_form'), self.data,
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(400, response.status_code)
+        self.assertIn('Upload a valid image. The file you uploaded',
+                      response.content)
+
+        # add to data text file text.jpg
+        self.data.update({'image': get_temporary_text_file('text.jpg')})
+
+        response = self.client.post(reverse('hello:contact_form'), self.data,
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(400, response.status_code)
+        self.assertIn('Upload a valid image. The file you uploaded',
+                      response.content)
+
+    def test_form_page_edit_data_to_wrong(self):
+        """
+        Test check edit data at form page to wrong data.
+        """
+
+        # edit data with empty name and invalid data_of_birth, email
+        self.data.update({'name': '',
+                          'date_of_birth': 'date',
+                          'email': 'ivanovyandex.ru'})
+
+        # send new data to server
+        response = self.client.post(reverse('hello:contact_form'), self.data,
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 400)
+
+        # response errors
+        self.assertIn('This field is required.', response.content)
+        self.assertIn('Enter a valid date.', response.content)
+        self.assertIn('Enter a valid email address.', response.content)
+
+        # data in db did not change
+        edit_contact = Contact.objects.first()
+        self.assertEqual(self.contact.name, edit_contact.name)
