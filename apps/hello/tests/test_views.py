@@ -132,10 +132,39 @@ class FormPageTest(TestCase):
         """
 
         # send new data to server
-        response = self.client.post(reverse('hello:contact_form'), self.data)
+        response = self.client.post(reverse('hello:contact_form'), self.data,
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         response = self.client.get(reverse('hello:contact_form'))
         self.assertEqual(response.status_code, 200)
+
+        # data are shown at form page according to changed data
+        self.assertNotIn(self.contact.name, response.content)
+        self.assertNotIn(self.contact.surname, response.content)
+        self.assertNotIn(self.contact.date_of_birth.strftime('%Y-%m-%d'),
+                         response.content)
+        self.assertNotIn(self.contact.email, response.content)
+        self.assertNotIn(self.contact.jabber, response.content)
+
+        self.assertIn('Ivan', response.content)
+        self.assertIn('Ivanov', response.content)
+        self.assertIn('2016-02-02', response.content)
+        self.assertIn('ivanov@yandex.ru', response.content)
+        self.assertIn('iv@jabb.com', response.content)
+        self.assertIn('test.jpg', response.content)
+
+    def test_form_page_edit_data_without_ajax(self):
+        """
+        Test check edit data at form page without ajax.
+        """
+
+        # send new data to server
+        response = self.client.post(reverse('hello:contact_form'), self.data)
+
+        response = self.client.get(reverse('hello:success'))
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(reverse('hello:contact_form'))
 
         # data are shown at form page according to changed data
         self.assertNotIn(self.contact.name, response.content)
@@ -160,14 +189,20 @@ class FormPageTest(TestCase):
         # add to data text file text.txt
         self.data.update({'image': get_temporary_text_file('text.txt')})
 
-        response = self.client.post(reverse('hello:contact_form'), self.data)
-        self.assertEqual(200, response.status_code)
+        response = self.client.post(reverse('hello:contact_form'), self.data,
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(400, response.status_code)
+        self.assertIn('Upload a valid image. The file you uploaded',
+                      response.content)
 
         # add to data text file text.jpg
         self.data.update({'image': get_temporary_text_file('text.jpg')})
 
-        response = self.client.post(reverse('hello:contact_form'), self.data)
-        self.assertEqual(200, response.status_code)
+        response = self.client.post(reverse('hello:contact_form'), self.data,
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(400, response.status_code)
+        self.assertIn('Upload a valid image. The file you uploaded',
+                      response.content)
 
     def test_form_page_edit_data_to_wrong(self):
         """
@@ -180,8 +215,9 @@ class FormPageTest(TestCase):
                           'email': 'ivanovyandex.ru'})
 
         # send new data to server
-        response = self.client.post(reverse('hello:contact_form'), self.data)
-        self.assertEqual(response.status_code, 200)
+        response = self.client.post(reverse('hello:contact_form'), self.data,
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 400)
 
         # response errors
         self.assertIn('This field is required.', response.content)

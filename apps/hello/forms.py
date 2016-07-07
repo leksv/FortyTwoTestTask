@@ -31,3 +31,6 @@ class ContactForm(ModelForm):
             'date_of_birth': CalendarWidget(),
             'image': forms.FileInput()
         }
+
+    class Media:
+        js = ('js/contact.js',)

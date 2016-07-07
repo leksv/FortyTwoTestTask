@@ -16,7 +16,7 @@
     </div>
 
   <div class="col-md-8" id="form">
-    <form class="form-horizontal" id="person-form" action="{% url 'hello:contact_form' %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+    <form class="form-horizontal" id="contact-form" action="{% url 'hello:contact_form' %}" method="post" enctype="multipart/form-data">{% csrf_token %}
       {{ form.media }}
         <div class="col-md-6">
             <div class="form-group">
@@ -43,6 +43,7 @@
             <div class="form-group">
                 <label for="id_photo" class="col-sm-2 control-label">Photo</label>
                 <div class="col-sm-8">
+                   {{ form.image.errors }}
                    {{ form.image }}
               <div id="error_{{ form.image.label|lower}}" class="has-error"></div>
             </div>
@@ -116,3 +117,11 @@
  </div>
 </div>
 {% endblock content %}
+
+{% block script %}
+    <script type="text/javascript">
+        $('.datepicker').datepicker();
+    </script>
+    <script src="{% static 'bower_components/jquery-validation/dist/jquery.validate.min.js' %}"></script>
+    <script src="{% static 'bower_components/jquery-validation/dist/additional-methods.min.js' %}"></script>
+{% endblock script %}
