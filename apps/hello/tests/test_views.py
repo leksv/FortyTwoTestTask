@@ -124,7 +124,7 @@ class FormPageTest(TestCase):
                          date_of_birth='2016-02-02',
                          bio='', email='ivanov@yandex.ru',
                          jabber='iv@jabb.com',
-                         image=get_temporary_image())        
+                         image=get_temporary_image())
 
     def test_form_page_edit_data(self):
         """
