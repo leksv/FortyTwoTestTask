@@ -116,20 +116,58 @@ class RequestAjaxTest(TestCase):
 
 
 class FormPageTest(TestCase):
-    fixtures = ['contact_data.json']
-
     def setUp(self):
-        self.contact = Contact.objects.first()
         self.data = dict(name='Ivan', surname='Ivanov',
                          date_of_birth='2016-02-02',
                          bio='', email='ivanov@yandex.ru',
-                         jabber='iv@jabb.com',
-                         image=get_temporary_image())
+                         jabber='iv@jabb.com')
+
+    def test_form_page_view(self):
+        """
+        Test check access to form page only authenticate
+        users and it used template request.html.
+        """
+
+        # if user is not authenticate
+        response = self.client.get(reverse('hello:contact_form'))
+        self.assertEqual(response.status_code, 302)
+
+        # after authentication
+        self.client.login(username='admin', password='admin')
+        response = self.client.get(reverse('hello:contact_form'))
+        self.assertTemplateUsed(response, 'contact_form.html')
+
+
+    def test_form_page_add_data(self):
+        """
+        Test check add data at form page.
+        """
+
+        # login on the site
+        self.client.login(username='admin', password='admin')
+
+        response = self.client.post(reverse('hello:contact_form'), self.data,
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        response = self.client.get(reverse('hello:contact_form'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Ivan', response.content)
+        self.assertIn('Ivanov', response.content)
+        self.assertIn('2016-02-02', response.content)
+        self.assertIn('ivanov@yandex.ru', response.content)
+        self.assertIn('iv@jabb.com', response.content)
 
     def test_form_page_edit_data(self):
         """
         Test check edit data at form page.
         """
+        self.data.update({
+            'image': get_temporary_image(),
+            'bio': 'I was born ...'
+        })
+
+        # login on the site
+        self.client.login(username='admin', password='admin')
 
         # send new data to server
         response = self.client.post(reverse('hello:contact_form'), self.data,
@@ -137,19 +175,11 @@ class FormPageTest(TestCase):
 
         response = self.client.get(reverse('hello:contact_form'))
         self.assertEqual(response.status_code, 200)
-
-        # data are shown at form page according to changed data
-        self.assertNotIn(self.contact.name, response.content)
-        self.assertNotIn(self.contact.surname, response.content)
-        self.assertNotIn(self.contact.date_of_birth.strftime('%Y-%m-%d'),
-                         response.content)
-        self.assertNotIn(self.contact.email, response.content)
-        self.assertNotIn(self.contact.jabber, response.content)
-
         self.assertIn('Ivan', response.content)
         self.assertIn('Ivanov', response.content)
         self.assertIn('2016-02-02', response.content)
         self.assertIn('ivanov@yandex.ru', response.content)
+        self.assertIn('I was born ...', response.content)
         self.assertIn('iv@jabb.com', response.content)
         self.assertIn('test.jpg', response.content)
 
@@ -157,6 +187,8 @@ class FormPageTest(TestCase):
         """
         Test check edit data at form page without ajax.
         """
+        # login on the site
+        self.client.login(username='admin', password='admin')
 
         # send new data to server
         response = self.client.post(reverse('hello:contact_form'), self.data)
@@ -166,20 +198,11 @@ class FormPageTest(TestCase):
 
         response = self.client.get(reverse('hello:contact_form'))
 
-        # data are shown at form page according to changed data
-        self.assertNotIn(self.contact.name, response.content)
-        self.assertNotIn(self.contact.surname, response.content)
-        self.assertNotIn(self.contact.date_of_birth.strftime('%Y-%m-%d'),
-                         response.content)
-        self.assertNotIn(self.contact.email, response.content)
-        self.assertNotIn(self.contact.jabber, response.content)
-
         self.assertIn('Ivan', response.content)
         self.assertIn('Ivanov', response.content)
         self.assertIn('2016-02-02', response.content)
         self.assertIn('ivanov@yandex.ru', response.content)
         self.assertIn('iv@jabb.com', response.content)
-        self.assertIn('test.jpg', response.content)
 
     def test_form_page_on_text_file(self):
         """
@@ -188,6 +211,9 @@ class FormPageTest(TestCase):
 
         # add to data text file text.txt
         self.data.update({'image': get_temporary_text_file('text.txt')})
+
+        # login on the site
+        self.client.login(username='admin', password='admin')
 
         response = self.client.post(reverse('hello:contact_form'), self.data,
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
@@ -214,6 +240,9 @@ class FormPageTest(TestCase):
                           'date_of_birth': 'date',
                           'email': 'ivanovyandex.ru'})
 
+        # login on the site
+        self.client.login(username='admin', password='admin')
+
         # send new data to server
         response = self.client.post(reverse('hello:contact_form'), self.data,
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
@@ -223,7 +252,3 @@ class FormPageTest(TestCase):
         self.assertIn('This field is required.', response.content)
         self.assertIn('Enter a valid date.', response.content)
         self.assertIn('Enter a valid email address.', response.content)
-
-        # data in db did not change
-        edit_contact = Contact.objects.first()
-        self.assertEqual(self.contact.name, edit_contact.name)

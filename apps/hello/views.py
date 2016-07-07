@@ -55,9 +55,10 @@ def form_page(request):
                 if getattr(settings, 'DEBUG', False):
                     time.sleep(3)
 
-                list_pers = serializers.serialize("json", [contact])
-                return HttpResponse(json.dumps(list_pers),
-                                    content_type="application/json")
+                if contact:
+                    list_pers = serializers.serialize("json", [contact])
+                    return HttpResponse(json.dumps(list_pers),
+                                        content_type="application/json")
             else:
                 return redirect('hello:success')
         else:
