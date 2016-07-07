@@ -37,7 +37,7 @@ def request_ajax(request):
     return HttpResponseBadRequest('Error request')
 
 
-@login_required
+@login_required(login_url='/login/')
 def form_page(request):
     contact = Contact.objects.first()
 
