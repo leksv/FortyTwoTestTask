@@ -10,14 +10,17 @@ from hello.models import Contact
 
 
 class TagAdminLinkTest(TestCase):
+    fixtures = ['admin_data.json', 'contact_data.json']
+
     def test_edit_link_tag_is_at_home_page(self):
         """
         Test check tag is on home page
         """
+        contact = Contact.objects.first()
         self.client.login(username='admin', password='admin')
         response = self.client.get(reverse('hello:home'))
-        self.assertIn(
-            '<a href="/admin/hello/person/1/">(admin)</a>', response.content)
+        link = '<a href="/admin/hello/contact/%s/">(admin)</a>' % contact.id
+        self.assertIn(link, response.content)
 
     def test_edit_link_tag_recive_model_that_register_admin(self):
         """
@@ -25,10 +28,10 @@ class TagAdminLinkTest(TestCase):
         """
         # test edit_link recive instance model that register admin
         contact = Contact.objects.first()
-        link_person_one = edit_link(contact)['edit_link']
+        link_contact_one = edit_link(contact)['edit_link']
 
         self.client.login(username='admin', password='admin')
-        response = self.client.get(link_person_one)
+        response = self.client.get(link_contact_one)
 
         self.assertIn('Django administration', response.content)
         self.assertIn(str(contact), response.content)
