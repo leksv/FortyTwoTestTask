@@ -116,9 +116,10 @@ class RequestAjaxTest(TestCase):
 
 
 class FormPageTest(TestCase):
-    fixtures = ['admin_data.json']
+    fixtures = ['admin_data.json', 'contact_data.json']
 
     def setUp(self):
+        self.contact = Contact.objects.first()
         self.data = dict(name='Ivan', surname='Ivanov',
                          date_of_birth='2016-02-02',
                          bio='', email='ivanov@yandex.ru',
@@ -138,25 +139,12 @@ class FormPageTest(TestCase):
         self.client.login(username='admin', password='admin')
         response = self.client.get(reverse('hello:contact_form'))
         self.assertTemplateUsed(response, 'contact_form.html')
-
-    def test_form_page_add_data(self):
-        """
-        Test check add data at form page.
-        """
-
-        # login on the site
-        self.client.login(username='admin', password='admin')
-
-        response = self.client.post(reverse('hello:contact_form'), self.data,
-                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-
-        response = self.client.get(reverse('hello:contact_form'))
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('Ivan', response.content)
-        self.assertIn('Ivanov', response.content)
-        self.assertIn('2016-02-02', response.content)
-        self.assertIn('ivanov@yandex.ru', response.content)
-        self.assertIn('iv@jabb.com', response.content)
+        self.assertIn(self.contact.name, response.content)
+        self.assertIn(self.contact.surname, response.content)
+        self.assertIn(self.contact.date_of_birth.strftime('%Y-%m-%d'),
+                      response.content)
+        self.assertIn(self.contact.email, response.content)
+        self.assertIn(self.contact.jabber, response.content)
 
     def test_form_page_edit_data(self):
         """
@@ -183,6 +171,29 @@ class FormPageTest(TestCase):
         self.assertIn('I was born ...', response.content)
         self.assertIn('iv@jabb.com', response.content)
         self.assertIn('test.jpg', response.content)
+
+    def test_form_page_delete_image(self):
+        """
+        Test check delete image at form page.
+        """
+        self.data.update({
+            'image': None,
+        })
+
+        # login on the site
+        self.client.login(username='admin', password='admin')
+
+        # send new data to server
+        response = self.client.post(reverse('hello:contact_form'), self.data,
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        response = self.client.get(reverse('hello:contact_form'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Ivan', response.content)
+        self.assertIn('Ivanov', response.content)
+        self.assertIn('2016-02-02', response.content)
+        self.assertIn('ivanov@yandex.ru', response.content)
+        self.assertIn('iv@jabb.com', response.content)
 
     def test_form_page_edit_data_without_ajax(self):
         """

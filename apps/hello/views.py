@@ -48,7 +48,7 @@ def form_page(request):
             new_contact = form.save(commit=False)
 
             if request.POST.get('image-clear') is None:
-                if new_contact.image is None:
+                if new_contact.image is None and contact.image:
                     new_contact.image = contact.image
 
             new_contact.save()
