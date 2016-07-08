@@ -1,8 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import StringIO
+import os
+
 from django.db import models
 from django.conf import settings
+from django.core.files.uploadedfile import InMemoryUploadedFile
+
+from PIL import Image as Img
+
+from hello.storage import HelloStorage
 
 
 class Contact(models.Model):
@@ -16,6 +24,36 @@ class Contact(models.Model):
                                 blank=True,
                                 max_length=250)
     other = models.TextField('other contact', blank=True)
+    image = models.ImageField('photo',
+                              blank=True,
+                              null=True,
+                              upload_to='photo/',
+                              storage=HelloStorage(),
+                              height_field='height',
+                              width_field='width')
+    height = models.PositiveIntegerField(default=1, null=True, blank=True)
+    width = models.PositiveIntegerField(default=1,  null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if self.image:
+            image = Img.open(StringIO.StringIO(self.image.read()))
+            image.thumbnail((200, 200), Img.ANTIALIAS)
+            output = StringIO.StringIO()
+            image.save(output, format='JPEG', quality=75)
+            output.seek(0)
+
+            self.image = InMemoryUploadedFile(
+                output, 'ImageField', "%s" % self.image.name,
+                'image/jpeg', output.len, None)
+
+        super(Contact, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        if self.image:
+            if os.path.isfile(self.image.path):
+                os.remove(self.image.path)
+
+        super(Contact, self).delete(*args, **kwargs)
 
     def __unicode__(self):
         return '%s %s' % (self.surname, self.name)

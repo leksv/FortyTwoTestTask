@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
 from datetime import date
 
 from django.test import TestCase
 
 from hello.models import Contact, RequestStore
+from hello.tests.temp_files import get_temporary_image
 
 
 class ContactTest(TestCase):
@@ -27,6 +29,41 @@ class ContactTest(TestCase):
         self.assertEquals(contact.id, self.contact.id)
         self.assertEquals(unicode(contact), 'Воронов Алексей')
         self.assertEquals(contact.name, 'Алексей')
+
+    def test_contact_model_image(self):
+        """
+        Test check that overwritten save method maintaining aspect ratio
+        and reduce image to <= 200*200.
+        """
+
+        # save image file
+        contact = Contact.objects.get(id=self.contact.id)
+        contact.image = get_temporary_image()
+        contact.save()
+
+        # check that height and width <= 200
+        self.assertTrue(contact.height <= 200)
+        self.assertTrue(contact.width <= 200)
+
+    def test_contact_model_image_delete(self):
+        """
+        Test check that delete method deleting file.
+        """
+        # save image file
+        contact = Contact.objects.get(id=self.contact.id)
+        contact.image = get_temporary_image()
+        contact.save()
+
+        # check image file is on storage
+        file = os.path.isfile(contact.image.path)
+        self.assertTrue(file)
+
+        # delete contact
+        contact.delete()
+
+        # check image file is not on storage
+        rm_file = os.path.isfile(contact.image.path)
+        self.assertFalse(rm_file)
 
 
 class RequestStoreTest(TestCase):
