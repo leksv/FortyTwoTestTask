@@ -6,7 +6,7 @@ from datetime import date
 
 from django.test import TestCase
 
-from hello.models import Contact, RequestStore
+from hello.models import Contact, RequestStore, NoteModel
 from hello.tests.temp_files import get_temporary_image
 
 
@@ -84,3 +84,43 @@ class RequestStoreTest(TestCase):
         # and check that it's saved its two attributes: path and method
         self.assertEquals(only_request.path, '/')
         self.assertEquals(only_request.method, 'GET')
+
+
+class NoteModelTestCase(TestCase):
+    def setUp(self):
+        self.contact = Contact.objects.create(
+            name='Алексей',
+            surname='Воронов',
+            email='aleks.woronow@yandex.ru',
+            date_of_birth=date(2016, 2, 25))
+        self.data = dict(model='Contact', inst='contact', action_type=0)
+
+    def test_notemodel(self):
+        """
+        Test creat, change and delete obbject notemodel.
+        """
+        # create note about contact
+        note_contact = NoteModel.objects.create(**self.data)
+
+        # take all objects of NoteModel
+        all_note = NoteModel.objects.all()
+        self.assertEqual(len(all_note), 1)
+        only_note = all_note[0]
+        self.assertEqual(only_note.model, note_contact.model)
+        self.assertEqual(only_note.action_type, 0)
+
+        # change note about person to requeststore
+        contact_note = NoteModel.objects.get(id=note_contact.id)
+        contact_note.model = 'RequestStore'
+        contact_note.inst = 'requeststore'
+        contact_note.action_type = 1
+        contact_note.save()
+
+        # now note about requeststore action = 1
+        contact_note_change = NoteModel.objects.get(model='RequestStore')
+        self.assertEqual(contact_note_change.action_type, 1)
+
+        # delete note person
+        NoteModel.objects.all().delete()
+        all_note = NoteModel.objects.all()
+        self.assertEqual(all_note.count(), 0)
