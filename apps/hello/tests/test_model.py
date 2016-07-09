@@ -130,3 +130,25 @@ class NoteModelTestCase(TestCase):
         NoteModel.objects.all().delete()
         all_note = NoteModel.objects.all()
         self.assertEqual(all_note.count(), 0)
+
+    def test_signal_processor(self):
+        """
+        Test signal processor records create,
+        change and delete object.
+        """
+        # check action_type after created object (loaded fixtures) is 0
+        note = NoteModel.objects.get(model='Conact')
+        self.assertEqual(note.action_type, 0)
+
+        # check action_type after change object is 1
+        contact = Contact.objects.first()
+        contact.name = 'Change'
+        contact.save()
+        note = NoteModel.objects.filter(model='Contact').last()
+        self.assertEqual(note.action_type, 1)
+
+        # check record after delete object is 2
+        contact = Contact.objects.first()
+        contact.delete()
+        note = NoteModel.objects.last()
+        self.assertEqual(note.action_type, 2)
