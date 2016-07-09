@@ -103,9 +103,9 @@ class NoteModelTestCase(TestCase):
         note_contact = NoteModel.objects.create(**self.data)
 
         # take all objects of NoteModel
-        all_note = NoteModel.objects.all()
-        self.assertEqual(len(all_note), 1)
-        only_note = all_note[0]
+        all_note = NoteModel.objects.filter(model='Contact')
+        self.assertEqual(len(all_note), 2)
+        only_note = all_note[1]
 
         self.assertEqual(only_note.model, note_contact.model)
         self.assertEqual(only_note.action_type, 0)
@@ -137,7 +137,7 @@ class NoteModelTestCase(TestCase):
         change and delete object.
         """
         # check action_type after created object (loaded fixtures) is 0
-        note = NoteModel.objects.get(model='Conact')
+        note = NoteModel.objects.get(model='Contact')
         self.assertEqual(note.action_type, 0)
 
         # check action_type after change object is 1
