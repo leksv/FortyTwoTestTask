@@ -106,8 +106,14 @@ class NoteModelTestCase(TestCase):
         all_note = NoteModel.objects.all()
         self.assertEqual(len(all_note), 1)
         only_note = all_note[0]
+
         self.assertEqual(only_note.model, note_contact.model)
         self.assertEqual(only_note.action_type, 0)
+        self.assertEquals(unicode(only_note),
+                          "%s  %s: %s " % (
+                              only_note.model,
+                              only_note.get_action_type_display(),
+                              only_note.inst))
 
         # change note about person to requeststore
         contact_note = NoteModel.objects.get(id=note_contact.id)
