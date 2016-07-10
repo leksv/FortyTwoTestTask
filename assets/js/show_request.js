@@ -5,10 +5,17 @@ var helloRequest = (function($){
     var items = [];
     var id = data[0];
     $.each(JSON.parse(data[1]), function(i, val) {
-        items.push('<tr>'
+        var req_class = 'old';
+        if (parseInt(val.fields.new_request, 10) == 1){
+            req_class = 'info';
+        }
+        items.push('<tr class="' + req_class + '">'
                     + '<td class="path">' + val.fields.path + '</td>'
                     + '<td>' + val.fields.method + '</td>'
                     + '<td>' + val.fields.date + '</td>'
+                    + '<td class="priority">' + 0 + '</td>'
+                    + '<td class="td_click">Up</td>'
+                    + '<td class="td_click">Down</td>'
                     + '</tr>'
         );
         
