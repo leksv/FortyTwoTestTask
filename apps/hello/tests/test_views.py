@@ -172,21 +172,13 @@ class FormPageTest(TestCase):
         self.assertIn('iv@jabb.com', response.content)
         self.assertIn('test.jpg', response.content)
 
-    def test_form_page_delete_image(self):
-        """
-        Test check delete image at form page.
-        """
-        self.data.update({
-            'image': None,
-        })
-
-        # login on the site
-        self.client.login(username='admin', password='admin')
+        # edit data with not image file
+        self.data.pop('image')
 
         # send new data to server
         response = self.client.post(reverse('hello:contact_form'), self.data,
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-
+        # check image file in not changed
         response = self.client.get(reverse('hello:contact_form'))
         self.assertEqual(response.status_code, 200)
         self.assertIn('Ivan', response.content)
@@ -194,6 +186,7 @@ class FormPageTest(TestCase):
         self.assertIn('2016-02-02', response.content)
         self.assertIn('ivanov@yandex.ru', response.content)
         self.assertIn('iv@jabb.com', response.content)
+        self.assertIn('test.jpg', response.content)
 
     def test_form_page_edit_data_without_ajax(self):
         """
