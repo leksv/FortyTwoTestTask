@@ -23,6 +23,3 @@ collectstatic:
 
 c_test:
 	coverage run --source='.' manage.py test hello
-
-report:
-	coverage html -d coverage_html

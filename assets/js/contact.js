@@ -96,6 +96,7 @@ $(document).ready(function(){
                 
            })
             .fail(function(data){
+                console.log(data);
                 unblock_form();
                 $("#form_ajax_error").show();
 
