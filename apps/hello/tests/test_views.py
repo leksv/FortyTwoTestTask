@@ -6,7 +6,7 @@ from datetime import date
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-from hello.models import Contact
+from hello.models import Contact, RequestStore
 from hello.tests.temp_files import get_temporary_image
 from hello.tests.temp_files import get_temporary_text_file
 
@@ -113,6 +113,63 @@ class RequestAjaxTest(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertIn('Error request', response.content)
+
+    def test_request_ajax_view_change_priority(self):
+        """
+        Test request ajax view change priority field Requeststore model.
+        """
+        self.client.get(reverse('hello:home'))
+        response = self.client.get(reverse('hello:requests_ajax'),
+                                   HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        self.assertNotIn('333', response.content)
+        self.assertIn('/', response.content)
+        self.assertIn('GET', response.content)
+
+        self.client.post(
+            reverse('hello:requests_ajax'),
+            {'path': '/', 'priority': '333'},
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        response = self.client.get(reverse('hello:requests_ajax'),
+                                   HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        self.assertIn('333', response.content)
+        self.assertIn('/', response.content)
+        self.assertIn('GET', response.content)
+
+        self.client.post(
+            reverse('hello:requests_ajax'),
+            {'path': '/', 'priority': '555'},
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        response = self.client.get(reverse('hello:requests_ajax'),
+                                   HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        self.assertNotIn('333', response.content)
+        self.assertIn('555', response.content)
+        self.assertIn('/', response.content)
+        self.assertIn('GET', response.content)
+
+    def test_request_ajax_view_set_request_as_viewed(self):
+        """
+        Test request_ajax view update requests as viewed
+        if request.GET has {'viewed": 'yes"}
+        """
+        self.client.get(reverse('hello:home'))
+
+        all_req = RequestStore.objects.all()
+        self.assertEqual(len(all_req), 1)
+        self.assertEqual(all_req[0].new_request, 1)
+
+        self.client.get(
+            reverse('hello:requests_ajax'),
+            {'viewed': 'yes'},
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        all_req = RequestStore.objects.all()
+        self.assertEqual(len(all_req), 1)
+        self.assertEqual(all_req[0].new_request, 0)
 
 
 class FormPageTest(TestCase):

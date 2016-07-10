@@ -28,8 +28,24 @@ def request_view(request):
 
 def request_ajax(request):
     if request.is_ajax():
+        if request.method == 'POST':
+            path = request.POST['path']
+            priority = request.POST['priority']
+            print(priority)
+            if int(priority) >= 0:
+                RequestStore.objects.filter(path=path)\
+                                    .update(priority=priority)
+            return HttpResponse(json.dumps({'response': 'ok'}),
+                                content_type='application/json')
+
+        viewed = request.GET.get('viewed')
+        if viewed == 'yes':
+            RequestStore.objects.filter(new_request=1).update(new_request=0)
+
         new_request = RequestStore.objects.filter(new_request=1).count()
         request_list = RequestStore.objects.order_by('-date')[:10]
+        request_list = list(request_list)
+        request_list.sort(key=lambda a: a.path)
         list_req = serializers.serialize("json", request_list)
         data = json.dumps((new_request, list_req))
         return HttpResponse(data, content_type="application/json")
