@@ -67,13 +67,14 @@ class ContactTest(TestCase):
 
 
 class RequestStoreTest(TestCase):
+    def setUp(self):
+        RequestStore.objects.create(
+            path='/', method='GET', date=date(2016, 7, 4))
+
     def test_request_store(self):
         """
         Check to create of model and save it to db
         """
-
-        RequestStore.objects.create(
-            path='/', method='GET', date=date(2016, 7, 4))
 
         # now check we can find it in the database again
         all_requests = RequestStore.objects.all()
@@ -84,6 +85,31 @@ class RequestStoreTest(TestCase):
         # and check that it's saved its two attributes: path and method
         self.assertEquals(only_request.path, '/')
         self.assertEquals(only_request.method, 'GET')
+
+    def test_record_priority_field_default(self):
+        """
+        Test record priority field default.
+        """
+        request_store = RequestStore.objects.first()
+
+        # check record RequestStore contains default priority - 0
+        self.assertEqual(request_store.path, '/')
+        self.assertEqual(request_store.method, 'GET')
+        self.assertEqual(request_store.priority, 0)
+
+    def test_change_record_priority_field(self):
+        """
+        Test check when change priority field.
+        """
+        request_store = RequestStore.objects.first()
+
+        # change priority to 1 and send POST to home page
+        request_store.priority = 1
+        request_store.save()
+
+        # check record RequestStore contains priority 1
+        request_store = RequestStore.objects.first()
+        self.assertEqual(request_store.priority, 1)
 
 
 class NoteModelTestCase(TestCase):
