@@ -31,7 +31,6 @@ def request_ajax(request):
         if request.method == 'POST':
             path = request.POST['path']
             priority = request.POST['priority']
-            print(priority)
             if int(priority) >= 0:
                 RequestStore.objects.filter(path=path)\
                                     .update(priority=priority)

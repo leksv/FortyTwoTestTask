@@ -43,7 +43,7 @@ $(document).ready(function(){
                 console.log(data.response);
             },
             error: function (jqXHR, textStatus, errorThrown){
-                console.log(jqXHR);
+                console.log(jqXHR.responseText);
             }
         });
         $(this).toggleClass('grey');  
