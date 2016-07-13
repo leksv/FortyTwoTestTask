@@ -6,9 +6,9 @@ from datetime import date
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-from hello.models import Contact
 from hello.tests.temp_files import get_temporary_image
 from hello.tests.temp_files import get_temporary_text_file
+from hello.models import Contact, RequestStore
 
 
 class HomePageTest(TestCase):
@@ -114,6 +114,43 @@ class RequestAjaxTest(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn('Error request', response.content)
 
+    def test_request_ajax_return_10_last_request(self):
+        """
+        Test check that request_ajax view returns 10 last objects
+        when in db more than 10 records.
+        """
+
+        # create 15 records to db
+        for i in range(1, 15):
+            path = '/test%s' % i
+            method = 'GET'
+            RequestStore.objects.create(path=path, method=method)
+
+        # check number of objects in db
+        req_list = RequestStore.objects.count()
+        self.assertEqual(req_list, i)
+
+        # check that 10 objects in response
+        response = self.client.get(reverse('hello:requests_ajax'),
+                                   HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(10, response.content.count('pk'))
+        self.assertEqual(10, response.content.count('GET'))
+        self.assertNotIn('/test0', response.content)
+        self.assertNotIn('"/test1"', response.content)
+        self.assertNotIn('/test2', response.content)
+        self.assertNotIn('/test3', response.content)
+        self.assertNotIn('/test4', response.content)
+        self.assertIn('/test5', response.content)
+        self.assertIn('/test6', response.content)
+        self.assertIn('/test7', response.content)
+        self.assertIn('/test8', response.content)
+        self.assertIn('/test9', response.content)
+        self.assertIn('/test10', response.content)
+        self.assertIn('/test11', response.content)
+        self.assertIn('/test12', response.content)
+        self.assertIn('/test13', response.content)
+        self.assertIn('/test14', response.content)
+
 
 class FormPageTest(TestCase):
     fixtures = ['admin_data.json', 'contact_data.json']
@@ -172,21 +209,13 @@ class FormPageTest(TestCase):
         self.assertIn('iv@jabb.com', response.content)
         self.assertIn('test.jpg', response.content)
 
-    def test_form_page_delete_image(self):
-        """
-        Test check delete image at form page.
-        """
-        self.data.update({
-            'image': None,
-        })
-
-        # login on the site
-        self.client.login(username='admin', password='admin')
+        # edit data with not image file
+        self.data.pop('image')
 
         # send new data to server
         response = self.client.post(reverse('hello:contact_form'), self.data,
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-
+        # check image file in not changed
         response = self.client.get(reverse('hello:contact_form'))
         self.assertEqual(response.status_code, 200)
         self.assertIn('Ivan', response.content)
@@ -194,6 +223,7 @@ class FormPageTest(TestCase):
         self.assertIn('2016-02-02', response.content)
         self.assertIn('ivanov@yandex.ru', response.content)
         self.assertIn('iv@jabb.com', response.content)
+        self.assertIn('test.jpg', response.content)
 
     def test_form_page_edit_data_without_ajax(self):
         """

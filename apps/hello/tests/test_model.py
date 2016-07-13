@@ -6,7 +6,7 @@ from datetime import date
 
 from django.test import TestCase
 
-from hello.models import Contact, RequestStore
+from hello.models import Contact, RequestStore, NoteModel
 from hello.tests.temp_files import get_temporary_image
 
 
@@ -84,3 +84,71 @@ class RequestStoreTest(TestCase):
         # and check that it's saved its two attributes: path and method
         self.assertEquals(only_request.path, '/')
         self.assertEquals(only_request.method, 'GET')
+
+
+class NoteModelTestCase(TestCase):
+    def setUp(self):
+        self.contact = Contact.objects.create(
+            name='Алексей',
+            surname='Воронов',
+            email='aleks.woronow@yandex.ru',
+            date_of_birth=date(2016, 2, 25))
+        self.data = dict(model='Contact', inst='contact', action_type=0)
+
+    def test_notemodel(self):
+        """
+        Test creat, change and delete obbject notemodel.
+        """
+        # create note about contact
+        note_contact = NoteModel.objects.create(**self.data)
+
+        # take all objects of NoteModel
+        all_note = NoteModel.objects.filter(model='Contact')
+        self.assertEqual(len(all_note), 2)
+        only_note = all_note[1]
+
+        self.assertEqual(only_note.model, note_contact.model)
+        self.assertEqual(only_note.action_type, 0)
+        self.assertEquals(unicode(only_note),
+                          "%s  %s: %s " % (
+                              only_note.model,
+                              only_note.get_action_type_display(),
+                              only_note.inst))
+
+        # change note about person to requeststore
+        contact_note = NoteModel.objects.get(id=note_contact.id)
+        contact_note.model = 'RequestStore'
+        contact_note.inst = 'requeststore'
+        contact_note.action_type = 1
+        contact_note.save()
+
+        # now note about requeststore action = 1
+        contact_note_change = NoteModel.objects.get(model='RequestStore')
+        self.assertEqual(contact_note_change.action_type, 1)
+
+        # delete note person
+        NoteModel.objects.all().delete()
+        all_note = NoteModel.objects.all()
+        self.assertEqual(all_note.count(), 0)
+
+    def test_signal_processor(self):
+        """
+        Test signal processor records create,
+        change and delete object.
+        """
+        # check action_type after created object (loaded fixtures) is 0
+        note = NoteModel.objects.get(model='Contact')
+        self.assertEqual(note.action_type, 0)
+
+        # check action_type after change object is 1
+        contact = Contact.objects.first()
+        contact.name = 'Change'
+        contact.save()
+        note = NoteModel.objects.filter(model='Contact').last()
+        self.assertEqual(note.action_type, 1)
+
+        # check record after delete object is 2
+        contact = Contact.objects.first()
+        contact.delete()
+        note = NoteModel.objects.last()
+        self.assertEqual(note.action_type, 2)
