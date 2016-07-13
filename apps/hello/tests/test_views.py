@@ -6,7 +6,7 @@ from datetime import date
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-from hello.models import Contact
+from hello.models import Contact, RequestStore
 
 
 class HomePageTest(TestCase):
@@ -111,3 +111,40 @@ class RequestAjaxTest(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertIn('Error request', response.content)
+
+    def test_request_ajax_return_10_last_request(self):
+        """
+        Test check that request_ajax view returns 10 last objects
+        when in db more than 10 records.
+        """
+
+        # create 15 records to db
+        for i in range(1, 15):
+            path = '/test%s' % i
+            method = 'GET'
+            RequestStore.objects.create(path=path, method=method)
+
+        # check number of objects in db
+        req_list = RequestStore.objects.count()
+        self.assertEqual(req_list, i)
+
+        # check that 10 objects in response
+        response = self.client.get(reverse('hello:requests_ajax'),
+                                   HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(10, response.content.count('pk'))
+        self.assertEqual(10, response.content.count('GET'))
+        self.assertNotIn('/test0', response.content)
+        self.assertNotIn('"/test1"', response.content)
+        self.assertNotIn('/test2', response.content)
+        self.assertNotIn('/test3', response.content)
+        self.assertNotIn('/test4', response.content)
+        self.assertIn('/test5', response.content)
+        self.assertIn('/test6', response.content)
+        self.assertIn('/test7', response.content)
+        self.assertIn('/test8', response.content)
+        self.assertIn('/test9', response.content)
+        self.assertIn('/test10', response.content)
+        self.assertIn('/test11', response.content)
+        self.assertIn('/test12', response.content)
+        self.assertIn('/test13', response.content)
+        self.assertIn('/test14', response.content)
