@@ -54,7 +54,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'apps.middleware.helloRequest.RequestMiddle',
+    'apps.middleware.helloRequest.RequestMiddleware',
 )
 
 ROOT_URLCONF = 'fortytwo_test_task.urls'
@@ -148,6 +148,10 @@ LOGGING = {
     },
     'loggers': {
         'apps.middleware.helloRequest': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+         },
+        'apps.hello.views': {
             'handlers': ['console'],
             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
          },

@@ -8,7 +8,7 @@ from django.test.client import RequestFactory
 
 from hello.models import RequestStore
 from hello.views import home_page
-from apps.middleware.helloRequest import RequestMiddle
+from apps.middleware.helloRequest import RequestMiddleware
 
 
 class RequestMiddlewareTests(TestCase):
@@ -45,6 +45,6 @@ class RequestMiddlewareTests(TestCase):
         request.user = user
 
         # middleware store request
-        RequestMiddle().process_view(request, home_page)
+        RequestMiddleware().process_view(request, home_page)
         middleware_obj = RequestStore.objects.all()[0]
         self.assertEqual(middleware_obj.user.username, 'test')
