@@ -11,7 +11,7 @@ class Command(NoArgsCommand):
     def handle_noargs(self, **options):
         for mdl in ContentType.objects.all():
             mcl = mdl.model_class()
-            msg = "%s:\t %s - %d" %\
+            msg = "%s has the %s model which has %d objects" %\
                   (mcl.__module__, mcl.__name__, mcl._default_manager.count())
             self.stdout.write(msg)
             self.stderr.write("error:  %s" % msg)
