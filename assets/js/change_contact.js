@@ -6,6 +6,7 @@ function csrfSafeMethod(method) {
 }
 
 
+
 $(document).ready(function(){
 
     function block_form() {
@@ -27,7 +28,34 @@ $(document).ready(function(){
         }
         block_form();
     }
+    $.validator.addMethod('max_period', function (v, el, maxPeriod) {
+        if (this.optional(el)) {
+            return true;
+        }
+        var selectedDate = new Date($(el).val());
+        var minDate = new Date();
+        minDate = new Date(minDate.setFullYear(minDate.getFullYear()-maxPeriod));
+        minDate = new Date(minDate.setHours(0));
+        minDate = new Date(minDate.setMinutes(0));
+        minDate = new Date(minDate.setSeconds(0));
+        minDate = new Date(minDate.setMilliseconds(0));
+        return minDate <= selectedDate;
+    }, 'Date of birth cannot be earlier then 100 years ago.');
+
+
+    $.validator.addMethod('maxdate', function (v, el, maxDate) {
+        if (this.optional(el)) {
+            return true;
+        }
+        var selectedDate = new Date($(el).val());
     
+        maxDate = new Date(maxDate.setHours(0));
+        maxDate = new Date(maxDate.setMinutes(0));
+        maxDate = new Date(maxDate.setSeconds(0));
+        maxDate = new Date(maxDate.setMilliseconds(0));
+    
+        return selectedDate <= maxDate;
+    }, 'Date of birth cannot be later then now or now.');
 
     
     var validator = $('#contact-form').validate({
@@ -35,7 +63,7 @@ $(document).ready(function(){
             focusInvalid: false,
             focusCleanup: true,
             name: {
-                required: true,
+                required: false,
                 minlength: 3,
                 maxlength: 16
             },
@@ -46,7 +74,10 @@ $(document).ready(function(){
             },
             date_of_birth: {
                 required: true,
-                date: true
+                date: true,
+                maxdate: new Date(),
+                max_period: 100
+                
             },
             email: {
                 required: true,

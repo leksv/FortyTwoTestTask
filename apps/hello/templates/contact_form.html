@@ -120,7 +120,11 @@
 
 {% block script %}
     <script type="text/javascript">
-        $('.datepicker').datepicker();
+        $('.datepicker').datepicker({ 
+            dateFormat: 'yy-mm-dd',
+            minDate: '-100Y',
+            maxDate: 0
+        });
     </script>
     <script src="{% static 'bower_components/jquery-validation/dist/jquery.validate.min.js' %}"></script>
     <script src="{% static 'bower_components/jquery-validation/dist/additional-methods.min.js' %}"></script>
