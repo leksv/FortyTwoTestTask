@@ -70,7 +70,7 @@ class RequestStore(models.Model):
                              null=True)
     date = models.DateTimeField(auto_now_add=True)
     new_request = models.PositiveIntegerField(default=1)
-    priority = models.PositiveIntegerField(default=0)
+    priority = models.PositiveIntegerField(default=0, null=True, blank=True)
 
     def __unicode__(self):
         return "%s - %s" % (self.path, self.method)
