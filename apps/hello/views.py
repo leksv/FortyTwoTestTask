@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render
 
-from .models import Contact
+from hello.models import Contact
 
 
 def home_page(request):
