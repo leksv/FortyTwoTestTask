@@ -9,5 +9,4 @@ from hello import views
 urlpatterns = patterns(
     '',
     url(r'^$', views.home_page, name='home'),
-    
 )
