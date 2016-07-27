@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.conf.urls import patterns, url
 from django.views.generic import TemplateView
 
-from .import views
+from hello import views
 
 
 urlpatterns = patterns(
