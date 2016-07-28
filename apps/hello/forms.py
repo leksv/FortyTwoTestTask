@@ -6,6 +6,8 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.template import Context, loader
 
+from ckeditor.widgets import CKEditorWidget
+
 from hello.models import Contact
 
 
@@ -31,7 +33,9 @@ class ContactForm(ModelForm):
                   'email', 'jabber', 'skype_id', 'other', 'image']
         widgets = {
             'date_of_birth': CalendarWidget(),
-            'image': forms.FileInput()
+            'image': forms.FileInput(),
+            'bio': CKEditorWidget(config_name='contct_edit_ckeditor'),
+            'other': CKEditorWidget(config_name='contct_edit_ckeditor'),
         }
 
     class Media:

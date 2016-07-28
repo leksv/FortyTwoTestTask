@@ -176,5 +176,13 @@ CKEDITOR_CONFIGS = {
             ['Link', 'Unlink'],
             ['RemoveFormat', 'Source']
         ]
+    },
+    'contct_edit_ckeditor': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+
+        ],
+        'height': 100,
+        'width': 300,
     }
 }
