@@ -17,7 +17,7 @@ class CommandsTestCase(TestCase):
         call_command('showmodels', stdout=out, stderr=out)
 
         # check number of objects model Contact is 0
-        self.assertIn('Contact - 0', out.getvalue())
+        self.assertIn('Contact model which has 0 objects', out.getvalue())
         self.assertIn('error:', out.getvalue())
 
         Contact.objects.create(
@@ -28,4 +28,4 @@ class CommandsTestCase(TestCase):
             jabber='42cc@khavr.com')
         # number of objects model Person is 1, after person is created
         call_command('showmodels', stdout=out, stderr=out)
-        self.assertIn('Contact - 1', out.getvalue())
+        self.assertIn('Contact model which has 1 objects', out.getvalue())
