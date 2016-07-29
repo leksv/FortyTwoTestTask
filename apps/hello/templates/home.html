@@ -4,8 +4,16 @@
 {% block content %}
 <div class="row">
      {% if contact %}
-     
-  <div class="col-md-8 col-md-offset-4" >
+     <div class="col-md-4" id="image">
+            <div class="col-sm-10">
+               <img  id="personImage" class="img-thumbnail" 
+                    src="{% if contact.image %}
+                         {{ contact.image.url }}
+                    {% endif %}"
+                    alt="Towel test photo">
+            </div>
+    </div>
+  <div class="col-md-8" >
      <div class="col-md-5">
           <ul class="list-group">
                <li class="list-group-item"></li>
