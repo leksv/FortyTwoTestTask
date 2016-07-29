@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from datetime import date
+from dateutil.relativedelta import relativedelta
+
 from django.forms import ModelForm
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
@@ -26,6 +29,20 @@ class ContactForm(ModelForm):
         for field_name, field in self.fields.items():
             if field_name != 'image' and field_name != 'date_of_birth':
                 field.widget.attrs['class'] = 'form-control'
+
+    def clean_date_of_birth(self):
+        data = self.cleaned_data['date_of_birth']
+
+        if data >= date.today():
+            raise forms.ValidationError(
+                "Date of birth cannot be later then now or now.")
+
+        min_date = date.today() - relativedelta(years=100)
+        if data < min_date:
+            raise forms.ValidationError(
+                "Date of birth cannot be earlier then 100 years ago.")
+
+        return data
 
     class Meta:
         model = Contact

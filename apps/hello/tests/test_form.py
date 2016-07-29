@@ -61,11 +61,11 @@ class FormTest(TestCase):
         """
         Test that Date of birth cannot be earlier then 100 years ago.
         """
-        delta = relativedelta(years=100)
-        birth_date = date.today() - delta
-        form = ContactForm({'date_of_birth': birth_date})
+        delta = relativedelta(years=101)
+        pick_date = date.today() - delta
+        form = ContactForm({'date_of_birth': pick_date})
 
         self.assertEqual(form.is_valid(), False)
         self.assertEqual(
             form.errors['date_of_birth'],
-            ['Date of birth cannot be later then now or now.'])
+            ['Date of birth cannot be earlier then 100 years ago.'])
