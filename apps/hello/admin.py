@@ -17,7 +17,7 @@ class ContactAdminForm(forms.ModelForm):
 
         fields = [
                 'name', 'surname', 'date_of_birth', 'bio',
-                'email', 'jabber', 'skype_id', 'other']
+                'email', 'jabber', 'skype_id', 'other', 'image']
         widgets = {
             'bio': CKEditorWidget(),
             'other': CKEditorWidget(),

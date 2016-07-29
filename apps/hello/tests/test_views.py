@@ -20,7 +20,8 @@ class HomePageTest(TestCase):
             date_of_birth=date(2016, 2, 25),
             bio='I was born ...',
             jabber='leksw@42cc.co',
-            skype_id='aleksey_woronov')
+            skype_id='aleksey_woronov',
+            image=get_temporary_image())
 
     def test_home_page_response_and_template(self):
         """
@@ -47,6 +48,7 @@ class HomePageTest(TestCase):
         self.assertContains(response, 'leksw@42cc.co')
         self.assertContains(response, 'aleksey_woronov')
         self.assertContains(response, 'I was born ...')
+        self.assertContains(response, 'test.jpg')
 
     def test_home_page_two_contact_in_db(self):
         """
