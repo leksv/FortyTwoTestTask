@@ -80,7 +80,7 @@ class HomePageTest(TestCase):
         """
         contact = Contact.objects.first()
         contact.bio = ''
-        contact.skype_id == ''
+        contact.skype_id = ''
         contact.other = ''
         contact.save()
 
