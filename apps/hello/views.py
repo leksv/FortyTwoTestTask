@@ -7,6 +7,7 @@ from django.shortcuts import render
 from django.http.response import HttpResponseServerError
 from django.core import serializers
 
+
 from hello.models import Contact
 
 
@@ -24,6 +25,7 @@ def home_page(request):
             logger.info(data)
         else:
             logger.info('db is empty')
+
     except Exception as err:
         logger.error(err)
         return HttpResponseServerError('Server Error (500)')
