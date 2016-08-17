@@ -7,6 +7,7 @@ import logging
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseBadRequest
+from django.http.response import HttpResponseServerError
 from django.core import serializers
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -15,12 +16,25 @@ from hello.models import Contact, RequestStore
 from hello.forms import ContactForm
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("home_page")
 
 
 def home_page(request):
     context = {}
-    contact = Contact.objects.first()
+    contact = None
+
+    try:
+        contact = Contact.objects.first()
+        if contact:
+            data = serializers.serialize('json', [contact])
+            logger.info(data)
+        else:
+            logger.info('db is empty')
+
+    except Exception as err:
+        logger.error(err)
+        return HttpResponseServerError('Server Error (500)')
+
     context['contact'] = contact
     return render(request, 'home.html', context)
 

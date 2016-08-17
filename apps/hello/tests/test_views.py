@@ -76,6 +76,23 @@ class HomePageTest(TestCase):
         self.assertNotContains(response, 'Алексей')
         self.assertContains(response, 'Contact data no yet')
 
+    def test_home_page_not_show_empty_fields(self):
+        """
+        Test home page not show empty fields.
+        """
+        contact = Contact.objects.first()
+        contact.bio = ''
+        contact.skype_id = ''
+        contact.other = ''
+        contact.save()
+
+        response = self.client.get(reverse('hello:home'))
+
+        self.assertNotContains(response, 'Bio:')
+        self.assertNotContains(response, 'Skype id:')
+        self.assertNotContains(response, 'Other contacts:')
+        self.assertContains(response, 'Name:')
+
 
 class RequestViewTest(TestCase):
     def test_request_view(self):

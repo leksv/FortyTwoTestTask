@@ -12,7 +12,9 @@
                <li class="list-group-item">Name: {{ contact.name }}</li>
                <li class="list-group-item">Last name: {{ contact.surname }}</li>
                <li class="list-group-item">Date of birth: {{ contact.date_of_birth }}</li>
+               {% if contact.bio %}
                <li class="list-group-item">Bio: {{ contact.bio|safe }}</li>
+               {% endif %}
           </ul>
      </div>      
      <div class="col-md-5">
@@ -20,8 +22,12 @@
                <li class="list-group-item"><strong>Contacts</strong></li>
                <li class="list-group-item">Email: {{ contact.email }}</li>
                <li class="list-group-item">Jabber: {{ contact.jabber }}</li>
+               {% if contact.skype_id  %}
                <li class="list-group-item">Skype id: {{ contact.skype_id }}</li>
+               {% endif %}
+               {% if contact.other %}
                <li class="list-group-item">Other contacts: {{ contact.other|safe }}</li>
+              {% endif %}
           </ul>
      </div>
    </div>
